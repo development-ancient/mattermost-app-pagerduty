@@ -86,7 +86,7 @@ The ``/pd`` command should be available after the configuration has been success
 $ npm install
 ```
 
-*  Update the environment configuration file. The .env file must be modified or added to set the environment variables, it must be in the root of the repository.
+*  Update the environment configuration file. The ``.env`` file must be modified or added to set the environment variables, it must be in the root of the repository.
 
 ```
 file: .env
@@ -98,11 +98,9 @@ HOST=https://mattermost-pagerduty-dev.ancient.mx
 
 Variable definition
 
-PROJECT: in case of executing the project with docker using the ``.build.sh`` this variable will be used for the name of the container
-
-PORT: port number on which the PagerDuty integration is listening
-
-HOST: PagerDuty API integration usage url
+- PROJECT: In case of executing the project with docker using the ``.build.sh`` this variable will be used for the name of the container
+- PORT: Port number on which the PagerDuty integration is listening
+- HOST: PagerDuty API integration usage URL
 
 * Finally, the project must be executed.
 
