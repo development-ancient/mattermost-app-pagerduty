@@ -26,7 +26,7 @@ This application allows you to integrate PagerDuty to your Mattermost instance, 
 
 This plugin requires that your Mattermost workspace has the ``/apps install`` command enabled.
 
-To install, as a super admin user role, run the command ``/apps install http PAGERDUTY_API_URL`` in any channel. 
+To install, as a super admin user role, run the command ``/apps install http PAGERDUTY_API_URL`` in any channel.
 
 The ``PAGERDUTY_API_URL`` should be replaced with the URL where the PagerDuty API instance is running. Example: ``/apps install http https://mattermost-pagerduty-dev.ancient.mx/manifest.json``.
 
@@ -35,16 +35,16 @@ The ``/pd`` command should be available after the configuration has been success
 ## Configuration
 
 1. First, install the app in your current Mattermost instance (refer to [Installation](#installation)) so that the ``/pd`` command is available.
-2. Open your PagerDuty profile to get your credentials and link to your Mattermost instance. 
+2. Open your PagerDuty profile to get your credentials and link to your Mattermost instance.
 3. Select the **Integration** tab in the toolbar. To the right of the popup (in the **Developer Tools** column) select **Developer Mode**
-4. On the **My Apps** page, select **Create New APP** and fill the form. 
-5. When the form is completed, select **OAuth 2.0** in the same form (on the **Add** button below). 
+4. On the **My Apps** page, select **Create New APP** and fill the form.
+5. When the form is completed, select **OAuth 2.0** in the same form (on the **Add** button below).
 6. In the **Redirect URL** field, add the following link (where "mattermostURL" should be replaced with the link to you Mattermost instance):
 ``{mattermostURL}/plugins/com.mattermost.apps/apps/PagerDuty/oauth2/remote/complete``
 7. Select **Save**.
-8. The ``Client ID`` and ``Client Secret`` will be displayed. Save them in a safe place - the ``Client Secret`` can't be recovered). 
+8. The ``Client ID`` and ``Client Secret`` will be displayed. Save them in a safe place - the ``Client Secret`` can't be recovered).
 9. To finish, in the **Scopes** select **Read/Write**, then select **Save**.
-10. Return to Mattermost. 
+10. Return to Mattermost.
 11. As a super admin role user, run the ``/pd configure`` command.
 12. Enter the PagerDuty ``Client ID`` and ``Client Secret`` when prompted.
 
@@ -70,6 +70,8 @@ The ``/pd`` command should be available after the configuration has been success
 - ``/pd oncall list``: Get a list of the users that are on-call at the moment.
 
 # Development
+
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/development-ancient/mattermost-app-pagerduty)
 
 ## Manual installation
 
