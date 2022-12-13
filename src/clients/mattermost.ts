@@ -104,4 +104,39 @@ export class MattermostClient {
             }
         }).then((response: AxiosResponse<any>) => response.data);
     }
+
+    public addMemberToChannel(channelId: string, userId: string): Promise<any> {
+        const url: string = `${this.config.mattermostUrl}${Routes.Mattermost.ApiVersionV4}${Routes.Mattermost.ChannelMemberPath}`;
+        const body = {
+            user_id: userId
+        }
+        return axios.post(replace(url, Routes.PathsVariable.Identifier, channelId),body, {
+            headers: {
+                Authorization: `Bearer ${this.config.accessToken}`
+            }
+        }).then((response: AxiosResponse<any>) => response.data);
+    }
+
+    public addUserToTeam(teamId: string, userId: string): Promise<any> {
+        const url: string = `${this.config.mattermostUrl}${Routes.Mattermost.ApiVersionV4}${Routes.Mattermost.TeamMemberPath}`;
+        const body = {
+            team_id: teamId,
+            user_id: userId
+        }
+        return axios.post(replace(url, Routes.PathsVariable.Identifier, teamId), body, {
+            headers: {
+                Authorization: `Bearer ${this.config.accessToken}`
+            }
+        }).then((response: AxiosResponse<any>) => response.data);
+    }
+
+    public updateRolesByUser(userId: string, roles: string): Promise<any> {
+        const url: string = `${this.config.mattermostUrl}${Routes.Mattermost.ApiVersionV4}${Routes.Mattermost.UsersUpdateRolePath}`;
+
+        return axios.put(replace(url, Routes.PathsVariable.Identifier, userId), { roles }, {
+            headers: {
+                Authorization: `Bearer ${this.config.accessToken}`
+            }
+        }).then((response: AxiosResponse<any>) => response.data);
+    }
 }

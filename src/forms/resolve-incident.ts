@@ -1,14 +1,14 @@
 import { MattermostClient, MattermostOptions } from "../clients/mattermost";
 import { AppExpandLevels, ExceptionType, PagerDutyIcon, Routes } from "../constant";
-import { 
-   AppCallRequest, 
-   AppCallValues, 
-   AppForm, 
-   Incident, 
-   Oauth2App, 
-   PagerDutyOpts, 
-   PostUpdate, 
-   UpdateIncident 
+import {
+   AppCallRequest,
+   AppCallValues,
+   AppForm,
+   Incident,
+   Oauth2App,
+   PagerDutyOpts,
+   PostUpdate,
+   UpdateIncident
 } from "../types";
 import {configureI18n} from "../utils/translations";
 import { replace, tryPromiseForGenerateMessage } from "../utils/utils";
@@ -24,23 +24,24 @@ export async function confirmResolveOpenModal(call: AppCallRequest): Promise<App
    const incidentValues: AppCallValues | undefined = call.state.incident;
    const incidentId: string = incidentValues?.id;
    const postId: string = <string>call.context.post?.id;
-	 const i18nObj = configureI18n(call.context);
+   const i18nObj = configureI18n(call.context);
 
    const responseIncident: APIResponse = await tryPromiseForGenerateMessage(
       pdClient.get(
          replace(Routes.PagerDuty.IncidentPathPrefix, Routes.PathsVariable.Identifier, incidentId)
       ),
       ExceptionType.MARKDOWN,
-      i18nObj.__('forms.')
+      i18nObj.__('forms.resolved.incident-failed')
    );
-   const incident: Incident = responseIncident.data['incident.resolved.incident-failed'];
-   if (incident.status === 'resolved') {
+   
+   const incident: Incident = responseIncident.data['incident'];
+   if (incident?.status === 'resolved') {
       await updatePostResolveIncident(call, postId, incident);
       throw new Exception(ExceptionType.MARKDOWN, i18nObj.__('forms.resolved.incident-exception', { summary: incident.summary }))
    }
 
    return {
-      title: i18nObj.__('forms.resolvedtitle-incident.'),
+      title: i18nObj.__('forms.resolved.title-incident'),
       header: i18nObj.__('forms.resolved.header-incident', { summary: incident.summary }),
       icon: PagerDutyIcon,
       fields: [],
@@ -48,8 +49,8 @@ export async function confirmResolveOpenModal(call: AppCallRequest): Promise<App
          path: `${Routes.App.CallPathIncidentResolveSubmit}`,
          expand: {
             app: AppExpandLevels.EXPAND_SUMMARY,
-            oauth2_app: AppExpandLevels.EXPAND_SUMMARY,
-            oauth2_user: AppExpandLevels.EXPAND_SUMMARY
+            oauth2_app: AppExpandLevels.EXPAND_ALL,
+            oauth2_user: AppExpandLevels.EXPAND_ALL
          },
          state: {
             ...call.state,
@@ -64,7 +65,7 @@ export async function callResolveIncidentSubmit(call: AppCallRequest): Promise<s
    const incidentValues: AppCallValues | undefined = call.state.incident;
    const incidentId: string = incidentValues?.id;
    const postId: string = <string>call.state.post?.id;
-	 const i18nObj = configureI18n(call.context);
+   const i18nObj = configureI18n(call.context);
 
    const pdClient: PartialCall = api({ token: oauth2.user?.token, tokenType: 'bearer' });
 
@@ -77,7 +78,7 @@ export async function callResolveIncidentSubmit(call: AppCallRequest): Promise<s
    );
 
    const incident: Incident = responseIncident.data['incident'];
-  
+
    if (incident.status === 'resolved') {
       await updatePostResolveIncident(call, postId, incident);
       throw new Exception(ExceptionType.MARKDOWN, i18nObj.__('forms.resolved.incident-exception', { summary: incident.summary }))
@@ -89,7 +90,7 @@ export async function callResolveIncidentSubmit(call: AppCallRequest): Promise<s
          status: 'resolved'
       }
    }
-   
+
    await tryPromiseForGenerateMessage(
       pdClient.put(
          replace(Routes.PagerDuty.IncidentPathPrefix, Routes.PathsVariable.Identifier, incidentId),
@@ -107,7 +108,7 @@ export async function callResolveIncidentSubmit(call: AppCallRequest): Promise<s
 async function updatePostResolveIncident(call: AppCallRequest, postId: string, incident: Incident) {
    const mattermostUrl: string | undefined = call.context.mattermost_site_url;
    const botAccessToken: string | undefined = call.context.bot_access_token;
-	 const i18nObj = configureI18n(call.context);
+   const i18nObj = configureI18n(call.context);
 
    const mattermostOptions: MattermostOptions = {
       mattermostUrl: <string>mattermostUrl,
@@ -122,7 +123,7 @@ async function updatePostResolveIncident(call: AppCallRequest, postId: string, i
       props: {
          attachments: [
             {
-								title: h6(i18nObj.__('forms.resolved.title-trigger', { url: hyperlink(`${incident.summary}`, incident.html_url) })),
+               title: h6(i18nObj.__('forms.resolved.title-trigger', { url: hyperlink(`${incident.summary}`, incident.html_url) })),
                title_link: '',
                color: "#AD251C",
                fields: [
@@ -142,5 +143,8 @@ async function updatePostResolveIncident(call: AppCallRequest, postId: string, i
          ]
       }
    }
-   await mattermostClient.updatePost(<string>postId, updatePost);
+   try {
+      await mattermostClient.updatePost(<string>postId, updatePost);
+   } catch (error) {
+   }
 }
